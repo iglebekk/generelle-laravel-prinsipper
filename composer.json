@@ -1,0 +1,22 @@
+{
+  "name": "iglebekk/generelle-laravel-prinsipper",
+  "description": "Generelle Laravel-utviklingsprinsipper som publishable dokumentasjon.",
+  "type": "library",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0|^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Andersiglebekk\\LaravelPrinciples\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Andersiglebekk\\LaravelPrinciples\\LaravelPrinciplesServiceProvider"
+      ]
+    }
+  }
+}
