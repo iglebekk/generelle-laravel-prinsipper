@@ -62,9 +62,9 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 ### Backend
 
-- **Laravel 12** - Moderne Laravel-struktur
+- **Laravel siste versjon** - Moderne Laravel-struktur
 - **PHP 8.3+** - Constructor property promotion, type hints
-- **Laravel Fortify** - Autentisering uten Breeze/Jetstream
+- **Laravel Breeze** - Autentisering og grunnleggende UI
 - **SQLite** (utvikling) / PostgreSQL/MySQL (produksjon)
 
 ### Frontend
