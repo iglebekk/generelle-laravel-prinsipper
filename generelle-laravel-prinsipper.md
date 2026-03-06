@@ -2,6 +2,14 @@
 
 Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Laravel-utvikling basert på Laravel Boost Guidelines. Disse prinsippene kan gjenbrukes på tvers av prosjekter.
 
+## Språk
+
+- Alle kommentarer, variabelnavn, funksjonsnavn og tekst i koden skal være på engelsk.
+- UI-tekster skal lokaliseres ved hjelp av Laravel's localization system (`lang`-filer).
+- Unngå hardkodet tekst i views, controllers, og andre steder i koden.
+- Eksempel på lokaliserte tekster i `lang/en/resource.php`:
+- Bruk alltid engelsk som grunnspråk i applikasjonen, selv om sluttbrukerne er norske. Dette sikrer konsistens i koden og gjør det enklere å legge til flere språk senere.
+
 ## Laravel-first og Spatie-first (obligatorisk)
 
 - Default: Velg innebygd Laravel/Eloquent før custom kode.
