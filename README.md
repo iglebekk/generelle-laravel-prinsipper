@@ -5,7 +5,7 @@ Denne pakken publiserer dokumentasjonen om kodestandarder og beste praksis for L
 ## Installasjon
 
 ```bash
-composer require iglebekk/generelle-laravel-prinsipper
+composer require iglebekk/generelle-laravel-prinsipper --dev
 ```
 
 ## Publiser dokumentasjon
