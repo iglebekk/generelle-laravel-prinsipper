@@ -14,6 +14,7 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 - Default: Velg innebygd Laravel/Eloquent før custom kode.
 - Default: Velg Spatie-pakker før andre tredjepartspakker når behovet dekkes.
+- Default: Installer alltid Laravel Boost MCP Tools for rask innsikt i codebase og debugging (https://laravel.com/ai/boost)
 
 ### Prioritetsrekkefølge for valg av løsning
 
