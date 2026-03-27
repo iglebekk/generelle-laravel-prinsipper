@@ -125,6 +125,29 @@ resources/views/components/
 - Console commands auto-registreres fra `app/Console/Commands/`
 - Ingen `app/Console/Kernel.php`
 
+## 🏢 Multi-Tenancy
+
+### Data-tilgang via tenant (obligatorisk)
+
+Data skal **alltid** hentes via relasjonen til tenant. Direkte spørringer på modellen er **ikke tillatt** i en multi-tenant løsning, da dette kan eksponere data på tvers av tenants.
+
+```php
+// ✅ ALLTID hent data via tenant-relasjonen
+$stages = $tenant->pipelineStages()->orderBy('order')->get();
+$company = $tenant->companies()->findOrFail($id);
+$users = $tenant->users()->where('is_active', true)->get();
+
+// ❌ ALDRI hent data direkte på modellen
+$stages = PipelineStage::all(); // FEIL! Returnerer data fra alle tenants
+$stages = PipelineStage::where('tenant_id', $tenant->id)->get(); // FEIL! Bruk relasjon i stedet
+$company = Company::find($id); // FEIL! Ingen tenant-isolasjon
+```
+
+Dette sikrer at:
+- Data er alltid isolert per tenant
+- Det ikke er mulig å ved en feil eksponere en tenants data til en annen
+- Koden er konsistent og forutsigbar
+
 ## 📝 Kodestandarder
 
 ### PHP Generelt
@@ -618,6 +641,7 @@ laravel-boost-mcp-get-absolute-url --path="/dashboard"
 13. **Sikkerhet Først** - Alltid tenk på authorization og data validation
 14. **Ytelse** - Optimaliser database queries og unngå unødvendige operasjoner
 15. **Cache Strategisk** - Bruk caching for å forbedre ytelsen der det gir mening
+16. **Multi-Tenant Isolasjon** - Hent alltid data via tenant-relasjonen, aldri direkte på modellen
 
 ## 🔗 Nyttige Ressurser
 
