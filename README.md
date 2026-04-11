@@ -2,6 +2,9 @@
 
 Denne pakken publiserer dokumentasjonen om kodestandarder og beste praksis for Laravel.
 
+Den publiserte dokumentasjonen anbefaler `x-aui` som foretrukket basisbibliotek for frontend-komponenter:
+https://x-aui.com/docs/0.x/installation
+
 Støttede Laravel-versjoner: `9.x`, `10.x`, `11.x`, `12.x`, `13.x`.
 
 ## Installasjon

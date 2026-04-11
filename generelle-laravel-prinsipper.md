@@ -89,16 +89,16 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - **Laravel Pint** - Code formatting (Laravel's opinionated PHP-CS-Fixer)
 - Feature og unit tests med factories
 
-### Komponentbibliotek (valgfritt)
+### Komponentbibliotek
 
-- **ddfsn/blade-components** eller lignende - Forhåndsbyggede UI-komponenter
+- **x-aui** - Foretrukket basisbibliotek for frontend-komponenter. Følg installasjon og oppsett fra https://x-aui.com/docs/0.x/installation
 - **Spatie-pakker** - Foretrukket tredjeparts-leverandør (Media Library, Permissions, etc.)
 
 ## 🏗️ Arkitekturprinsipper
 
 ### Komponent-wrapper Mønster
 
-**VIKTIG**: Wrap alltid tredjepartskomponenter i egne app-spesifikke komponenter.
+**VIKTIG**: Bruk `x-aui` som foretrukket base for frontend-komponenter, og wrap alltid tredjepartskomponenter i egne app-spesifikke komponenter.
 
 ```
 resources/views/components/
