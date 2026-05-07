@@ -633,6 +633,99 @@ laravel-boost-mcp-application-info
 laravel-boost-mcp-get-absolute-url --path="/dashboard"
 ```
 
+## 🔐 Laravel MCP Server Best Practices
+
+Når en MCP-server eksponeres over HTTP, skal den behandles som en produksjons-APIflate med tilgang til brukerdata, interne handlinger og tredjepartsintegrasjoner. Lokale STDIO-servere kan ha implicit trust, men alle HTTP-tilgjengelige MCP-servere skal sikres eksplisitt.
+
+### Auth-valg
+
+- Bruk `laravel/mcp` som standardpakke for MCP-servere i Laravel.
+- Bruk Laravel Passport og OAuth 2.1 som standard for produksjon og eksterne MCP-klienter.
+- Registrer OAuth discovery, metadata og dynamic client registration med `Mcp::oauthRoutes()` i `routes/ai.php`.
+- Beskytt HTTP-servere med Passport middleware, normalt `->middleware('auth:api')`.
+- Bruk Laravel Sanctum bare for kontrollerte miljøer der både klient og server eies av samme system/team.
+- Bruk custom middleware bare når prosjektet allerede har en etablert token/JWT/API-key-løsning, og middleware må alltid resolve `$request->user()`.
+- Ikke bruk session-basert auth for HTTP MCP-servere. Valider bearer token per request.
+
+```php
+use App\Mcp\Servers\AppServer;
+use Laravel\Mcp\Facades\Mcp;
+
+Mcp::oauthRoutes();
+
+Mcp::web('/mcp/app', AppServer::class)
+    ->middleware(['auth:api', 'throttle:mcp']);
+```
+
+### Authorization og tenant-scope
+
+- Bruk `Laravel\Mcp\Request`, ikke `Illuminate\Http\Request`, i tools, prompts og resources.
+- Hent alltid bruker via `$request->user()` inne i MCP primitives.
+- Skjul tools, prompts og resources for brukere uten tilgang med `shouldRegister(Request $request): bool`.
+- `shouldRegister` er første authorization-lag, men hvert tool må fortsatt gjøre egne Policy/Gate-sjekker før data leses eller endres.
+- I multi-tenant-kode skal all lesing gå via `$request->user()->currentTenant` og tenant-relasjoner med `findOrFail()`.
+- Skriveoperasjoner skal sjekkes med Policies som sammenligner `current_tenant_id` mot ressursens `tenant_id` og relevant rolle.
+- Returner MCP-feilrespons ved manglende tilgang. Ikke lek detaljer om eksisterende ressurser på tvers av tenants.
+
+```php
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\Server\Tool;
+
+class ShowProjectTool extends Tool
+{
+    public function shouldRegister(Request $request): bool
+    {
+        return $request->user()?->can('viewAny', Project::class) ?? false;
+    }
+
+    public function handle(Request $request): Response
+    {
+        $tenant = $request->user()->currentTenant;
+        $project = $tenant->projects()->findOrFail($request->integer('project_id'));
+
+        if ($request->user()->cannot('view', $project)) {
+            return Response::error('Permission denied.');
+        }
+
+        return Response::json([
+            'id' => $project->id,
+            'name' => $project->name,
+        ]);
+    }
+}
+```
+
+### Tool-design og sikkerhet
+
+- Gi tools presise navn og smale ansvarsområder. Ett tool skal gjøre én tydelig handling.
+- Valider alle tool-argumenter med Laravel MCPs argument-validering før handlinger utføres.
+- Marker tools med riktige annotations: `#[IsReadOnly]`, `#[IsDestructive]`, `#[IsIdempotent]` og `#[IsOpenWorld]`.
+- Bruk read-only tools som default. Destructive tools skal være eksplisitte, policy-beskyttet og audit-logget.
+- Ikke forward MCP access tokens til nedstrøms API-er. Lagre tredjepartscredentials separat og bruk dem server-side.
+- Bruk minimale scopes. Ikke bruk wildcard scopes for MCP.
+- Legg rate limiting på alle HTTP MCP-servere, helst per bruker/token.
+- Logg authorization, destructive operations og eksterne kall med nok metadata til audit, men aldri secrets eller tokens.
+- Bruk queues for tunge eller langsomme handlinger, og returner tydelig status i stedet for å blokkere MCP-kallet unødvendig lenge.
+- Eksponer aldri interne stack traces, SQL-feil, tokens, secrets eller tenant-identifikatorer i MCP-responser.
+
+### Consent og token-administrasjon
+
+- Publiser MCP authorization view med `php artisan vendor:publish --tag=mcp-views --no-interaction` når Passport brukes.
+- Tilpass consent-skjermen slik at brukeren ser klientnavn, redirect URI og hvilke capabilities klienten ber om.
+- Krev MFA før godkjenning når MCP-serveren gir tilgang til sensitive data eller skriveoperasjoner.
+- Gi brukeren mulighet til å se og revoke MCP-tokens fra konto-/innstillingssider.
+- Varsle bruker eller admin når en ny MCP-klient får tilgang til produksjonsdata.
+
+### Testing og verifisering
+
+- Skriv Pest-tester for hver MCP primitive: happy path, validering og authorization.
+- Test at uautentiserte kall avvises for HTTP-servere.
+- Test at `shouldRegister` skjuler capabilities for brukere uten tilgang.
+- Test tenant-isolasjon eksplisitt: bruker i tenant A skal aldri kunne lese eller endre tenant B-data.
+- Test destructive tools med både autorisert og uautorisert bruker.
+- Bruk `php artisan mcp:inspector <server> --no-interaction` for manuell verifisering av auth, headers, tools, prompts og resources.
+
 ## 💡 Viktige Prinsipper
 
 1. **Følg Laravel Conventions** - Bruk Laravels innebygde løsninger først
