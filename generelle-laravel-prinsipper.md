@@ -36,6 +36,7 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 ### Spatie-regel
 
 - Sjekk alltid først om Spatie har en moden pakke for behovet.
+- `spatie/laravel-permission` skal være standardvalg og installeres som default i alle prosjekter.
 - Eksempler:
   - permissions/roles -> `spatie/laravel-permission`
   - media/files -> `spatie/laravel-medialibrary`
@@ -67,13 +68,21 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - Finnes dette i Spatie?
 - Hvis nei: kan enkel custom kode forsvares?
 
+### Ved valg av autentisering
+
+- Spør alltid brukeren om OAuth, SSO eller social login er viktig før du velger auth-pakke.
+- Ikke default til `Laravel Breeze` før dette er avklart.
+- Hvis OAuth/SSO er viktig, velg en løsning som dekker behovet naturlig og begrunn valget kort.
+- Hvis OAuth/SSO ikke er viktig, er `Laravel Breeze` fortsatt anbefalt standardvalg for enkel autentisering og grunnleggende UI.
+
 ## 📦 Anbefalt Teknologi-stack
 
 ### Backend
 
 - **Laravel siste versjon** - Moderne Laravel-struktur
 - **PHP 8.3+** - Constructor property promotion, type hints
-- **Laravel Breeze** - Autentisering og grunnleggende UI
+- **Laravel Breeze** - Standardvalg for autentisering og grunnleggende UI når OAuth/SSO ikke er et krav
+- **spatie/laravel-permission** - Installeres som standard i alle prosjekter for roller og rettigheter
 - **SQLite** (utvikling) / PostgreSQL/MySQL (produksjon)
 
 ### Frontend
