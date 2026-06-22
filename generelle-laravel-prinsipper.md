@@ -85,6 +85,11 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - **spatie/laravel-permission** - Installeres som standard i alle prosjekter for roller og rettigheter
 - **SQLite** (utvikling) / PostgreSQL/MySQL (produksjon)
 
+### Lokal utvikling
+
+- Prosjektene har som regel Laravel Valet installert lokalt, slik at nettsiden er tilgjengelig på mappenavn + `.test`.
+- Hvis prosjektmappen heter `nettsiden`, er testdomenet vanligvis `nettsiden.test`.
+
 ### Frontend
 
 - **Blade** templates med komponentbasert arkitektur
