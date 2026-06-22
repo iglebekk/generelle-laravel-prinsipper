@@ -6,6 +6,7 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 - Default: Velg innebygd Laravel/Eloquent før custom kode.
 - Default: Velg Spatie-pakker før andre tredjepartspakker når behovet dekkes.
+- Default: Sjekk om Flux UI eller Filament er installert i prosjektet; hvis de er installert, skal de favoriseres for relevante UI- og admin-behov.
 
 ### Prioritetsrekkefølge for valg av løsning
 
@@ -57,6 +58,7 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - Finnes dette i Laravel core?
 - Finnes dette i Eloquent API?
 - Finnes dette i Spatie?
+- Er Flux UI eller Filament installert, og dekker det behovet?
 - Hvis nei: kan enkel custom kode forsvares?
 
 ### Ved valg av autentisering
@@ -96,6 +98,8 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 ### Komponentbibliotek
 
+- **Flux UI** - Hvis installert, favoriseres Flux UI for relevante Blade-baserte UI-komponenter.
+- **Filament** - Hvis installert, favoriseres Filament for relevante adminpaneler, forms, tables og ressursbaserte grensesnitt.
 - **x-aui** - Foretrukket basisbibliotek for frontend-komponenter. Følg installasjon og oppsett fra https://x-aui.com/docs/0.x/installation
 - **Spatie-pakker** - Foretrukket tredjeparts-leverandør (Media Library, Permissions, etc.)
 
