@@ -5,16 +5,18 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 ## Språk
 
 - Alle kommentarer, variabelnavn, funksjonsnavn og tekst i koden skal være på engelsk.
-- UI-tekster skal lokaliseres ved hjelp av Laravel's localization system (`lang`-filer).
+- UI-tekster skal lokaliseres ved hjelp av Laravels localization system (`lang`-filer).
 - Unngå hardkodet tekst i views, controllers, og andre steder i koden.
-- Eksempel på lokaliserte tekster i `lang/en/resource.php`:
 - Bruk alltid engelsk som grunnspråk i applikasjonen, selv om sluttbrukerne er norske. Dette sikrer konsistens i koden og gjør det enklere å legge til flere språk senere.
+- Ikke legg rå PHP-logikk i Blade. Flytt logikk til controllers, actions, services eller view data.
+- Enkle Blade-uttrykk som `__()`, `route()` og `old()` er greit; beregninger, spørringer og beslutningslogikk hører ikke hjemme i Blade.
 
 ## Laravel-first og Spatie-first (obligatorisk)
 
 - Default: Velg innebygd Laravel/Eloquent før custom kode.
 - Default: Velg Spatie-pakker før andre tredjepartspakker når behovet dekkes.
-- Default: Sjekk om Flux UI eller Filament er installert i prosjektet; hvis de er installert, skal de favoriseres for relevante UI- og admin-behov.
+- Default: Bruk Flux UI for egenprodusert Blade-UI, alltid gjennom app-spesifikke komponenter.
+- Default: Filament er egen admin-/resource-løsning og kan brukes der det passer, men egenprodusert frontend følger fortsatt Flux- og komponentreglene.
 - Default: Installer alltid Laravel Boost MCP Tools for rask innsikt i codebase og debugging (https://laravel.com/ai/boost)
 
 ### Prioritetsrekkefølge for valg av løsning
@@ -47,8 +49,9 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 ### Controller/Service-regel
 
-- Controller kan inneholde effektiv, tydelig Laravel-kode.
-- Flytt kun ut logikk hvis den blir gjenbrukt eller øker tydelig domeneansvar.
+- Controller kan inneholde enkel, effektiv og tydelig Laravel-orkestrering.
+- Flytt logikk ut når den blir gjenbrukt, får tydelig domeneansvar eller gjør controlleren tung å lese.
+- Bruk Actions/ for enkeltansvar og Services/ for gjenbrukbar domenelogikk.
 - Unngå abstraksjoner uten tydelig verdi.
 
 ### Forbud mot unødvendige wrappers
@@ -67,15 +70,15 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - Finnes dette i Laravel core?
 - Finnes dette i Eloquent API?
 - Finnes dette i Spatie?
-- Er Flux UI eller Filament installert, og dekker det behovet?
+- Dekker Laravel, Eloquent, Spatie, Flux UI eller Filament behovet?
 - Hvis nei: kan enkel custom kode forsvares?
 
 ### Ved valg av autentisering
 
 - Spør alltid brukeren om OAuth, SSO eller social login er viktig før du velger auth-pakke.
-- Ikke default til `Laravel Breeze` før dette er avklart.
+- Bruk Laravel Fortify som standard for autentisering.
+- Fortify er frontend-agnostisk og skal pares med prosjektets egne Blade-/Flux-komponenter.
 - Hvis OAuth/SSO er viktig, velg en løsning som dekker behovet naturlig og begrunn valget kort.
-- Hvis OAuth/SSO ikke er viktig, er `Laravel Breeze` fortsatt anbefalt standardvalg for enkel autentisering og grunnleggende UI.
 
 ## 📦 Anbefalt Teknologi-stack
 
@@ -83,7 +86,7 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 - **Laravel siste versjon** - Moderne Laravel-struktur
 - **PHP 8.3+** - Constructor property promotion, type hints
-- **Laravel Breeze** - Standardvalg for autentisering og grunnleggende UI når OAuth/SSO ikke er et krav
+- **Laravel Fortify** - Standardvalg for autentisering uten å låse frontend
 - **spatie/laravel-permission** - Installeres som standard i alle prosjekter for roller og rettigheter
 - **SQLite** (utvikling) / PostgreSQL/MySQL (produksjon)
 
@@ -98,6 +101,8 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 - **TailwindCSS v4** for styling
 - **Alpine.js v3** for enkel interaktivitet
 - **Vite** for asset bundling
+- Frontend-design skal alltid tenkes og bygges mobile first.
+- Egenprodusert frontend bygges med Blade-komponenter, app-spesifikke Flux-wrappere og lokaliserte tekster.
 
 ### Testing & Kvalitet
 
@@ -107,26 +112,25 @@ Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Lara
 
 ### Komponentbibliotek
 
-- **Flux UI** - Hvis installert, favoriseres Flux UI for relevante Blade-baserte UI-komponenter.
-- **Filament** - Hvis installert, favoriseres Filament for relevante adminpaneler, forms, tables og ressursbaserte grensesnitt.
-- **x-aui** - Foretrukket basisbibliotek for frontend-komponenter. Følg installasjon og oppsett fra https://x-aui.com/docs/0.x/installation
+- **Flux UI** - Standard UI-bibliotek for egenproduserte Blade-komponenter.
+- **Filament** - Kan brukes som egen admin-/resource-løsning der det passer.
 - **Spatie-pakker** - Foretrukket tredjeparts-leverandør (Media Library, Permissions, etc.)
 
 ## 🏗️ Arkitekturprinsipper
 
 ### Komponent-wrapper Mønster
 
-**VIKTIG**: Bruk `x-aui` som foretrukket base for frontend-komponenter, og wrap alltid tredjepartskomponenter i egne app-spesifikke komponenter.
+**VIKTIG**: Flux UI-komponenter og annen tredjeparts-UI skal alltid wrappes i egne app-spesifikke Blade-komponenter før de brukes i views.
 
 ```
 resources/views/components/
-├── app/              # Dine wrapper-komponenter
-│   ├── card/         # Wrapper for x-card med app-spesifikk styling
-│   ├── button/       # Wrapper for x-btn
+├── app/              # App-specific wrapper components
+│   ├── card/         # Wrapper for Flux card with app-specific styling
+│   ├── button/       # Wrapper for Flux button
 │   └── ...
-├── form/             # Egne form-komponenter
-├── layouts/          # Layout-komponenter
-└── [domain]/         # Domene-spesifikke komponenter
+├── form/             # Form components
+├── layouts/          # Layout components
+└── [domain]/         # Domain-specific components
 ```
 
 **Fordeler**:
@@ -135,6 +139,7 @@ resources/views/components/
 - Enkel endring av standardverdier uten å berøre vendor-kode
 - Mulighet til å bytte ut underliggende bibliotek
 - Konsistens på tvers av applikasjonen
+- Views holdes tynne, lesbare og fri for rå PHP-logikk
 
 ### Laravel 12 Struktur
 
@@ -150,15 +155,15 @@ resources/views/components/
 Data skal **alltid** hentes via relasjonen til tenant. Direkte spørringer på modellen er **ikke tillatt** i en multi-tenant løsning, da dette kan eksponere data på tvers av tenants.
 
 ```php
-// ✅ ALLTID hent data via tenant-relasjonen
+// ✅ Always read tenant data through the tenant relationship
 $stages = $tenant->pipelineStages()->orderBy('order')->get();
 $company = $tenant->companies()->findOrFail($id);
 $users = $tenant->users()->where('is_active', true)->get();
 
-// ❌ ALDRI hent data direkte på modellen
-$stages = PipelineStage::all(); // FEIL! Returnerer data fra alle tenants
-$stages = PipelineStage::where('tenant_id', $tenant->id)->get(); // FEIL! Bruk relasjon i stedet
-$company = Company::find($id); // FEIL! Ingen tenant-isolasjon
+// ❌ Never read tenant data directly from the model
+$stages = PipelineStage::all(); // Wrong: returns data from all tenants
+$stages = PipelineStage::where('tenant_id', $tenant->id)->get(); // Wrong: use the relationship instead
+$company = Company::find($id); // Wrong: no tenant isolation
 ```
 
 Dette sikrer at:
@@ -171,24 +176,24 @@ Dette sikrer at:
 ### PHP Generelt
 
 ```php
-// ✅ Bruk constructor property promotion
+// ✅ Use constructor property promotion
 public function __construct(
     public GitHub $github,
     private string $apiKey,
 ) {}
 
-// ✅ Alltid eksplisitte return types
+// ✅ Always use explicit return types
 public function isAccessible(User $user, ?string $path = null): bool
 {
     // ...
 }
 
-// ✅ Curly braces selv for single-line
+// ✅ Use curly braces even for single-line statements
 if ($condition) {
     return true;
 }
 
-// ✅ PHPDoc blocks for kompleks logikk
+// ✅ Use PHPDoc blocks for complex types
 /**
  * @param array{name: string, email: string} $data
  * @return Collection<int, User>
@@ -202,7 +207,7 @@ public function createUsers(array $data): Collection
 ### Laravel Best Practices
 
 ```php
-// ✅ Bruk Eloquent relationships, ikke raw queries
+// ✅ Use Eloquent relationships, not raw queries
 $company->pipelineStage()->first();
 $tenant->pipelineStages()->orderBy('order')->get();
 
@@ -215,45 +220,53 @@ $stages = $tenant->pipelineStages()
 // ✅ Named routes
 return redirect()->route('settings.stages.index');
 
-// ✅ config() i stedet for env()
+// ✅ Use config() instead of env()
 $apiKey = config('services.github.token');
 
-// ❌ ALDRI bruk env() utenfor config-filer
-$apiKey = env('GITHUB_TOKEN'); // FEIL!
+// ❌ Never use env() outside config files
+$apiKey = env('GITHUB_TOKEN'); // Wrong
 ```
 
 ### Controllers
 
+- Controllers skal være enkle og effektive. Litt Eloquent-orkestrering er greit når det gir mer lesbar kode enn en ekstra abstraksjon.
+- Bruk Form Requests for validering og write-authorization der det passer.
+- Bruk Policies for domeneautorisasjon. Kall policy fra controller eller Form Request ut fra hva som gir tydeligst flyt.
+
 ```php
-// ✅ Authorization i controller methods
-public function index(Request $request)
+// ✅ Tenant-scoped read and clear response handling
+public function index(Request $request): View
 {
-    $this->authorize('viewAny', PipelineStage::class);
-    // ...
+    $stages = $request->user()
+        ->currentTenant
+        ->pipelineStages()
+        ->withCount('companies')
+        ->orderBy('order')
+        ->get();
+
+    return view('settings.stages.index', [
+        'stages' => $stages,
+    ]);
 }
 
-// ✅ Bruk Form Requests for validering
-public function store(PipelineStageRequest $request)
+// ✅ Form Request handles validation and authorization when that is clearest
+public function store(PipelineStageRequest $request): RedirectResponse
 {
-    // Validering og authorization håndteres i Request-klassen
-}
+    $request->user()
+        ->currentTenant
+        ->pipelineStages()
+        ->create($request->validated());
 
-// ✅ Hold controllers effektive og bruk laravel magic
-public function update(Request $request, Model $model)
-{
-    $this->authorize('update', $model);
-
-    $model->update($request->validated());
-
-    return redirect()->route('resource.index')
-        ->with('success', __('messages.updated'));
+    return redirect()
+        ->route('settings.stages.index')
+        ->with('status', __('pipeline_stages.messages.created'));
 }
 ```
 
 ```php
-// ✅ Unngå invokable controllers som standard
-// Foretrekk standard controller-metoder: index/show/create/store/edit/update/destroy
-// Unngå --invokable med mindre det er eksplisitt avtalt i oppgaven
+// ✅ Avoid invokable controllers as the default
+// Prefer standard controller methods: index/show/create/store/edit/update/destroy
+// Use --invokable only when explicitly agreed for the task
 ```
 
 ### Form Requests
@@ -261,13 +274,13 @@ public function update(Request $request, Model $model)
 ```php
 class PipelineStageRequest extends FormRequest
 {
-    // ✅ Authorization i Request, ikke Controller
+    // ✅ Use policy checks here when request-level authorization is clearest
     public function authorize(): bool
     {
-        return true; // Eller mer kompleks logikk
+        return $this->user()?->can('create', PipelineStage::class) ?? false;
     }
 
-    // ✅ Bruk array syntax
+    // ✅ Use array syntax
     public function rules(): array
     {
         return [
@@ -299,7 +312,7 @@ class PipelineStageRequest extends FormRequest
 ```php
 class ResourcePolicy
 {
-    // ✅ Enkel, tydelig authorization logic
+    // ✅ Keep authorization logic simple and explicit
     public function viewAny(User $user): bool
     {
         return $user->current_tenant_id !== null
@@ -329,7 +342,7 @@ class PipelineStage extends Model
         'is_active',
     ];
 
-    // ✅ Bruk casts() method, ikke $casts property
+    // ✅ Use the casts() method, not the $casts property
     protected function casts(): array
     {
         return [
@@ -351,90 +364,64 @@ class PipelineStage extends Model
 ### Blade Komponent Struktur
 
 ```blade
-{{-- ✅ Konsistent layout pattern --}}
+{{-- ✅ Page views compose components and keep logic out of Blade --}}
 <x-layouts.app>
-    <div class="py-6">
-        <x-container class="space-y-6">
-            {{-- Title --}}
-            <div class="flex flex-col gap-2">
-                <x-heading size="lg">{{ __('page.title') }}</x-heading>
-                <x-paragraph style="muted">{{ __('page.subtitle') }}</x-paragraph>
-            </div>
+    <x-app.page>
+        <x-app.header
+            :title="__('pipeline_stages.title')"
+            :description="__('pipeline_stages.description')"
+        />
 
-            {{-- Grid with sidebar --}}
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <aside class="lg:col-span-1">
-                    <x-settings.sidebar />
-                </aside>
+        <x-app.split-layout>
+            <x-slot:sidebar>
+                <x-settings.sidebar />
+            </x-slot:sidebar>
 
-                <div class="lg:col-span-3 space-y-6">
-                    {{-- Content --}}
-                    <x-app.card>
-                        <x-app.card.body>
-                            @if($items->isEmpty())
-                                <x-empty :title="..." :description="..." />
-                            @else
-                                {{-- Content here --}}
-                            @endif
-                        </x-app.card.body>
-                    </x-app.card>
-                </div>
-            </div>
-        </x-container>
-    </div>
+            <x-app.card>
+                <x-pipeline-stages.table :stages="$stages" />
+            </x-app.card>
+        </x-app.split-layout>
+    </x-app.page>
 </x-layouts.app>
 ```
 
 ### Form Pattern
 
 ```blade
-<form method="POST" action="{{ route('resource.store') }}" class="space-y-4">
-    @csrf
+<x-form :action="route('pipeline-stages.store')" method="POST">
+    <x-form.input
+        name="name"
+        :label="__('pipeline_stages.form.name')"
+        required
+    />
 
-    {{-- Input field --}}
-    <div>
-        <x-form.label for="name" :label="__('form.name')" />
-        <x-form.input
-            id="name"
-            name="name"
-            :value="old('name')"
-            required
-            class="@error('name') border-red-500 @enderror"
-        />
-        @error('name')
-            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-        @enderror
-    </div>
+    <x-form.checkbox
+        name="is_active"
+        :label="__('pipeline_stages.form.is_active')"
+        :checked="old('is_active', true)"
+    />
 
-    {{-- Checkbox --}}
-    <div>
-        <label for="is_active" class="flex items-center gap-2">
-            <input
-                type="checkbox"
-                id="is_active"
-                name="is_active"
-                value="1"
-                {{ old('is_active', true) ? 'checked' : '' }}
-                class="rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
-            />
-            <span class="text-sm font-medium text-gray-700">{{ __('form.is_active') }}</span>
-        </label>
-    </div>
+    <x-form.actions>
+        <x-app.button type="submit">
+            {{ __('pipeline_stages.form.save') }}
+        </x-app.button>
 
-    {{-- Actions --}}
-    <div class="flex items-center gap-3 pt-4">
-        <x-btn type="submit">{{ __('form.save') }}</x-btn>
-        <x-btn href="{{ route('resource.index') }}" style="ghost">{{ __('form.cancel') }}</x-btn>
-    </div>
-</form>
+        <x-app.button
+            :href="route('pipeline-stages.index')"
+            variant="ghost"
+        >
+            {{ __('pipeline_stages.form.cancel') }}
+        </x-app.button>
+    </x-form.actions>
+</x-form>
 ```
 
 ### Tailwind CSS Mønstre
 
-- Bruk utility classes direkte i komponenter
+- Bruk utility classes i komponenter, ikke spre store layoutblokker direkte i page views
 - Konsistent spacing: `gap-2`, `gap-3`, `gap-4`, `space-y-4`, `space-y-6`
 - Konsistent padding: `py-6`, `p-4`, `px-4`
-- Responsive design: `grid-cols-1 lg:grid-cols-4`
+- Mobile first responsive design: base classes for mobile, breakpoint-prefixes for større skjermer (`grid-cols-1 lg:grid-cols-4`)
 - Consistent rounding: `rounded-lg` (8px)
 
 ## 🧪 Testing med Pest
@@ -458,7 +445,7 @@ test('admin can perform action', function () {
 
     // Act
     $response = $this->actingAs($admin)
-        ->post('/resource', ['name' => 'Test']);
+        ->post(route('resources.store'), ['name' => 'Test']);
 
     // Assert
     $response->assertRedirect();
@@ -471,7 +458,7 @@ test('non-admin cannot perform action', function () {
     $tenant->users()->attach($user->id, ['role' => 'user']);
 
     $this->actingAs($user)
-        ->post('/resource', ['name' => 'Test'])
+        ->post(route('resources.store'), ['name' => 'Test'])
         ->assertForbidden();
 });
 ```
@@ -525,7 +512,7 @@ return [
 {{ __('resource.form.name') }}
 {{ __('resource.messages.created') }}
 
-{{-- Med parametere --}}
+{{-- With parameters --}}
 {{ __('resource.count', ['count' => $items->count()]) }}
 ```
 
@@ -537,7 +524,7 @@ return [
 # Controller
 php artisan make:controller ResourceController --resource --no-interaction
 
-# Model med factory og migration
+# Model with factory and migration
 php artisan make:model Resource -mf --no-interaction
 
 # Form Request
@@ -563,10 +550,10 @@ Dette sikrer at kommandoen kjører uten brukerinput, viktig for automatisering o
 
 1. **Analyser** - Forstå eksisterende mønstre i codebase
 2. **Plan** - Lag strukturert plan før implementering
-3. **Implementer** - Backend først (controller, request, policy, routes)
-4. **Views** - Følg etablerte UI-mønstre
+3. **Implementer** - Backend først (routes, request, policy, controller, actions/services ved behov)
+4. **Views** - Bygg med Blade-komponenter, Flux-wrappere og mobile first layout
 5. **Lokaliser** - Legg til translation keys
-6. **Test** - Skriv comprehensive feature tests
+6. **Test** - Skriv dekkende feature tests
 7. **Format** - Kjør `vendor/bin/pint --dirty --format agent`
 8. **Verifiser** - Kjør alle tester: `php artisan test --compact`
 
@@ -589,7 +576,7 @@ Schema::create('resources', function (Blueprint $table) {
 ### Route Organisering
 
 ```php
-// Gruppert med middleware
+// Group routes with middleware
 Route::middleware(['auth', 'tenant'])->group(function () {
     // Settings routes
     Route::prefix('settings')->group(function () {
@@ -607,11 +594,13 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
 ## 📋 Sjekkliste for Nye Features
 
-- [ ] Controller med authorization checks
-- [ ] Form Request med validation og messages
-- [ ] Policy med admin/user checks
+- [ ] Controller er enkel, tydelig og tenant-scoped der relevant
+- [ ] Form Request med validation, messages og authorization der det gir mening
+- [ ] Policy for domeneautorisasjon der relevant
 - [ ] Routes med korrekt naming convention
-- [ ] Views med wrapper components
+- [ ] Views komponerer app-spesifikke Blade-komponenter
+- [ ] Flux UI brukes kun gjennom app-spesifikke wrappers
+- [ ] Mobile first layout er ivaretatt
 - [ ] Translation keys for alle UI-tekster
 - [ ] Feature tests (happy path + edge cases)
 - [ ] Kjør Pint for formatering
@@ -620,10 +609,10 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
 ## 🚀 Laravel Boost MCP Tools
 
-Hvis du bruker Laravel Boost:
+Bruk Laravel Boost MCP Tools for Laravel- og økosystemkode før implementasjon:
 
 ```bash
-# Search dokumentasjon (VIKTIG!)
+# Search documentation (important)
 laravel-boost-mcp-search-docs --queries=["rate limiting", "validation"]
 
 # Database queries
@@ -738,17 +727,17 @@ class ShowProjectTool extends Tool
 ## 💡 Viktige Prinsipper
 
 1. **Følg Laravel Conventions** - Bruk Laravels innebygde løsninger først
-2. **Komponenter av Komponenter** - Wrap tredjepartsbiblioteker
+2. **Flux via App-komponenter** - Bruk Flux UI gjennom egne Blade-wrappere
 3. **Test Everything** - Feature tests er påkrevd
 4. **Type Hints Everywhere** - PHP 8.3+ features
 5. **Lokalisering fra Start** - Ingen hardkodet tekst
-6. **Keep Controllers Effective** - Large business logic i Actions/Services, but try use laravel magic and keep code in controllers.
+6. **Keep Controllers Effective** - Enkel orkestrering kan ligge i controller; tung eller gjenbrukt logikk flyttes til Actions/Services
 7. **Authorization i Policies** - Ikke spredt rundt i koden
 8. **Eager Loading** - Unngå N+1 queries
 9. **Named Routes** - Aldri hardkodede URLs
 10. **Format med Pint** - Konsistent kodestil
 11. **Bruk MCP Tools** - For rask innsikt i codebase og debugging
-12. **DRY Principles** - Ikke gjenta deg selv, bruk komponenter og tjenester
+12. **DRY med måte** - Lag komponenter og tjenester når de gir reell gjenbruk eller lesbarhet
 13. **Sikkerhet Først** - Alltid tenk på authorization og data validation
 14. **Ytelse** - Optimaliser database queries og unngå unødvendige operasjoner
 15. **Cache Strategisk** - Bruk caching for å forbedre ytelsen der det gir mening
