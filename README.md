@@ -28,9 +28,9 @@ For å sikre at siste versjon alltid er tilgjengelig i prosjektet og AI-instruks
 php artisan laravel-prinsipper:sync
 ```
 
-Standard targets:
-- `docs/laravel-prinsipper.md` (overskrives)
-- `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` (oppdateres mellom markører)
+Standard atferd:
+- `docs/laravel-prinsipper.md` overskrives med full prinsipptekst (kilde).
+- `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` får kun en kort referanse mellom markørene som peker til docs-fila — for å unngå duplisert innhold.
 
 Markører:
 ```
@@ -44,7 +44,7 @@ Markører:
 php artisan vendor:publish --tag=laravel-prinsipper-config
 ```
 
-I `config/laravel-prinsipper.php` kan du justere source, targets og markører.
+I `config/laravel-prinsipper.php` kan du justere `source`, `docs_target`, `reference_targets`, `reference_body` og markører.
 
 ## Oppdatering
 
@@ -53,6 +53,13 @@ Når retningslinjene oppdateres i pakken, kjør:
 ```bash
 composer update iglebekk/generelle-laravel-prinsipper
 php artisan laravel-prinsipper:sync
+```
+
+## Utvikling
+
+```bash
+composer test     # Pest via orchestra/testbench
+composer format   # Laravel Pint
 ```
 
 ## Automatisering via composer

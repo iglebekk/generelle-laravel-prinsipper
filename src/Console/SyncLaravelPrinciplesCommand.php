@@ -10,7 +10,7 @@ class SyncLaravelPrinciplesCommand extends Command
 {
     protected $signature = 'laravel-prinsipper:sync';
 
-    protected $description = 'Sync Laravel principles into project documentation and AI instruction files';
+    protected $description = 'Sync Laravel principles docs and insert short references into AI instruction files';
 
     public function __construct(private readonly Filesystem $files)
     {
@@ -27,29 +27,23 @@ class SyncLaravelPrinciplesCommand extends Command
             return self::FAILURE;
         }
 
-        $targets = $config['targets'] ?? [];
-        if ($targets === [] || ! is_array($targets)) {
-            $this->error('No targets configured for laravel-prinsipper sync.');
-            return self::FAILURE;
-        }
-
         $source = rtrim($this->files->get($sourcePath));
         $sectionHeader = rtrim($config['section_header'] ?? '## Generelle Laravel-prinsipper', "\n");
         $startMarker = $config['start_marker'] ?? '<!-- LARAVEL-PRINSIPPER:START -->';
         $endMarker = $config['end_marker'] ?? '<!-- LARAVEL-PRINSIPPER:END -->';
 
-        $overwriteTargets = $config['overwrite'] ?? [];
-        $overwriteResolved = $this->resolveTargets($overwriteTargets);
+        $docsTarget = $config['docs_target'] ?? 'docs/laravel-prinsipper.md';
+        if (is_string($docsTarget) && $docsTarget !== '') {
+            $this->writeDocs($this->resolvePath($docsTarget), $source);
+        }
 
-        foreach ($this->resolveTargets($targets) as $targetPath) {
-            $this->syncTarget(
-                $targetPath,
-                $source,
-                $sectionHeader,
-                $startMarker,
-                $endMarker,
-                in_array($targetPath, $overwriteResolved, true),
-            );
+        $referenceBody = trim($config['reference_body'] ?? '');
+        if ($referenceBody === '') {
+            $referenceBody = 'Følg prinsippene i `docs/laravel-prinsipper.md`.';
+        }
+
+        foreach ($this->resolveTargets($config['reference_targets'] ?? []) as $targetPath) {
+            $this->syncReference($targetPath, $referenceBody, $sectionHeader, $startMarker, $endMarker);
         }
 
         $this->info('Laravel principles synced.');
@@ -57,27 +51,27 @@ class SyncLaravelPrinciplesCommand extends Command
         return self::SUCCESS;
     }
 
-    private function syncTarget(
+    private function writeDocs(string $targetPath, string $source): void
+    {
+        $this->ensureDirectory($targetPath);
+        $this->files->put($targetPath, $source . "\n");
+        $this->line("Updated {$targetPath}");
+    }
+
+    private function syncReference(
         string $targetPath,
-        string $source,
+        string $referenceBody,
         string $sectionHeader,
         string $startMarker,
         string $endMarker,
-        bool $overwrite,
     ): void {
         $this->ensureDirectory($targetPath);
-
-        if ($overwrite) {
-            $this->files->put($targetPath, $source . "\n");
-            $this->line("Updated {$targetPath}");
-            return;
-        }
 
         $existing = $this->files->exists($targetPath)
             ? $this->files->get($targetPath)
             : '';
 
-        $section = $sectionHeader . "\n\n" . $source . "\n";
+        $section = $sectionHeader . "\n\n" . $referenceBody . "\n";
         $updated = $this->replaceSection($existing, $section, $startMarker, $endMarker);
 
         $this->files->put($targetPath, $updated);

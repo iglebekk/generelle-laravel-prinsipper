@@ -2,30 +2,24 @@
 
 namespace Andersiglebekk\LaravelPrinciples;
 
-use Illuminate\Support\ServiceProvider;
 use Andersiglebekk\LaravelPrinciples\Console\SyncLaravelPrinciplesCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class LaravelPrinciplesServiceProvider extends ServiceProvider
+class LaravelPrinciplesServiceProvider extends PackageServiceProvider
 {
-    public function register(): void
+    public function configurePackage(Package $package): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-prinsipper.php', 'laravel-prinsipper');
+        $package
+            ->name('laravel-prinsipper')
+            ->hasConfigFile('laravel-prinsipper')
+            ->hasCommand(SyncLaravelPrinciplesCommand::class);
     }
 
-    public function boot(): void
+    public function packageBooted(): void
     {
         $this->publishes([
             __DIR__ . '/../resources/docs/laravel-prinsipper.md' => base_path('docs/laravel-prinsipper.md'),
         ], 'laravel-prinsipper-docs');
-
-        $this->publishes([
-            __DIR__ . '/../config/laravel-prinsipper.php' => config_path('laravel-prinsipper.php'),
-        ], 'laravel-prinsipper-config');
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                SyncLaravelPrinciplesCommand::class,
-            ]);
-        }
     }
 }
