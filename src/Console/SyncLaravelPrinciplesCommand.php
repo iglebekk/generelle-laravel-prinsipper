@@ -24,6 +24,7 @@ class SyncLaravelPrinciplesCommand extends Command
 
         if (! $this->files->exists($sourcePath)) {
             $this->error("Source file not found: {$sourcePath}");
+
             return self::FAILURE;
         }
 
@@ -54,7 +55,7 @@ class SyncLaravelPrinciplesCommand extends Command
     private function writeDocs(string $targetPath, string $source): void
     {
         $this->ensureDirectory($targetPath);
-        $this->files->put($targetPath, $source . "\n");
+        $this->files->put($targetPath, $source."\n");
         $this->line("Updated {$targetPath}");
     }
 
@@ -71,7 +72,7 @@ class SyncLaravelPrinciplesCommand extends Command
             ? $this->files->get($targetPath)
             : '';
 
-        $section = $sectionHeader . "\n\n" . $referenceBody . "\n";
+        $section = $sectionHeader."\n\n".$referenceBody."\n";
         $updated = $this->replaceSection($existing, $section, $startMarker, $endMarker);
 
         $this->files->put($targetPath, $updated);
@@ -83,7 +84,7 @@ class SyncLaravelPrinciplesCommand extends Command
         $startPos = strpos($existing, $startMarker);
         $endPos = strpos($existing, $endMarker);
 
-        $wrappedSection = $startMarker . "\n" . $section . $endMarker;
+        $wrappedSection = $startMarker."\n".$section.$endMarker;
 
         if ($startPos === false || $endPos === false || $endPos < $startPos) {
             $trimmed = rtrim($existing);
@@ -91,13 +92,13 @@ class SyncLaravelPrinciplesCommand extends Command
                 $trimmed .= "\n\n";
             }
 
-            return $trimmed . $wrappedSection . "\n";
+            return $trimmed.$wrappedSection."\n";
         }
 
         $before = substr($existing, 0, $startPos);
         $after = substr($existing, $endPos + strlen($endMarker));
 
-        return rtrim($before) . "\n\n" . $wrappedSection . "\n" . ltrim($after);
+        return rtrim($before)."\n\n".$wrappedSection."\n".ltrim($after);
     }
 
     private function resolveSourcePath(?string $source): string
@@ -106,11 +107,11 @@ class SyncLaravelPrinciplesCommand extends Command
             return $this->resolvePath($source);
         }
 
-        return realpath(__DIR__ . '/../../resources/docs/laravel-prinsipper.md') ?: __DIR__ . '/../../resources/docs/laravel-prinsipper.md';
+        return realpath(__DIR__.'/../../resources/docs/laravel-prinsipper.md') ?: __DIR__.'/../../resources/docs/laravel-prinsipper.md';
     }
 
     /**
-     * @param array<int, string> $targets
+     * @param  array<int, string>  $targets
      * @return array<int, string>
      */
     private function resolveTargets(array $targets): array

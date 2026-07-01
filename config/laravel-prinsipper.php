@@ -15,5 +15,5 @@ return [
     'start_marker' => '<!-- LARAVEL-PRINSIPPER:START -->',
     'end_marker' => '<!-- LARAVEL-PRINSIPPER:END -->',
 
-    'reference_body' => "Følg prinsippene i [`docs/laravel-prinsipper.md`](docs/laravel-prinsipper.md). Den fila er kilden — ikke dupliser innholdet her.",
+    'reference_body' => 'Følg prinsippene i [`docs/laravel-prinsipper.md`](docs/laravel-prinsipper.md). Den fila er kilden — ikke dupliser innholdet her.',
 ];

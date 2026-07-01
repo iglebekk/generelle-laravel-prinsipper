@@ -19,7 +19,7 @@ class LaravelPrinciplesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->publishes([
-            __DIR__ . '/../resources/docs/laravel-prinsipper.md' => base_path('docs/laravel-prinsipper.md'),
+            __DIR__.'/../resources/docs/laravel-prinsipper.md' => base_path('docs/laravel-prinsipper.md'),
         ], 'laravel-prinsipper-docs');
     }
 }

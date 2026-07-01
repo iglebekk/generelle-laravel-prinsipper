@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
-    $this->workspace = sys_get_temp_dir() . '/laravel-prinsipper-test-' . uniqid();
+    $this->workspace = sys_get_temp_dir().'/laravel-prinsipper-test-'.uniqid();
     File::ensureDirectoryExists($this->workspace);
 
     $this->app->setBasePath($this->workspace);
@@ -21,7 +21,7 @@ afterEach(function () {
 it('writes full docs to docs_target', function () {
     $this->artisan('laravel-prinsipper:sync')->assertSuccessful();
 
-    $docs = $this->workspace . '/docs/laravel-prinsipper.md';
+    $docs = $this->workspace.'/docs/laravel-prinsipper.md';
     expect(File::exists($docs))->toBeTrue();
     expect(File::get($docs))->not->toBeEmpty();
 });
@@ -29,7 +29,7 @@ it('writes full docs to docs_target', function () {
 it('writes reference block into agent files, not full content', function () {
     $this->artisan('laravel-prinsipper:sync')->assertSuccessful();
 
-    $agents = File::get($this->workspace . '/AGENTS.md');
+    $agents = File::get($this->workspace.'/AGENTS.md');
 
     expect($agents)
         ->toContain('<!-- LARAVEL-PRINSIPPER:START -->')
@@ -38,8 +38,8 @@ it('writes reference block into agent files, not full content', function () {
 });
 
 it('replaces existing section between markers', function () {
-    $agentsPath = $this->workspace . '/AGENTS.md';
-    File::put($agentsPath, <<<MD
+    $agentsPath = $this->workspace.'/AGENTS.md';
+    File::put($agentsPath, <<<'MD'
     # My agent
 
     Existing content.
@@ -65,7 +65,7 @@ it('replaces existing section between markers', function () {
 });
 
 it('appends section when markers are missing', function () {
-    $agentsPath = $this->workspace . '/AGENTS.md';
+    $agentsPath = $this->workspace.'/AGENTS.md';
     File::put($agentsPath, "# Agent\n\nSome text.\n");
 
     $this->artisan('laravel-prinsipper:sync')->assertSuccessful();
@@ -73,7 +73,7 @@ it('appends section when markers are missing', function () {
     $agents = File::get($agentsPath);
 
     expect($agents)
-        ->toStartWith("# Agent")
+        ->toStartWith('# Agent')
         ->toContain('<!-- LARAVEL-PRINSIPPER:START -->')
         ->toContain('<!-- LARAVEL-PRINSIPPER:END -->');
 });
