@@ -1,6 +1,6 @@
 <?php
 
-namespace Andersiglebekk\LaravelPrinciples\Console;
+namespace Iglebekk\LaravelPrinciples\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;

@@ -174,6 +174,8 @@ class ComposerStaticInit50bff265e6cfad518a30b9d2e47ab23f
         array (
             'Illuminate\\Support\\' => 19,
             'Illuminate\\' => 11,
+            'Iglebekk\\LaravelPrinciples\\Tests\\' => 33,
+            'Iglebekk\\LaravelPrinciples\\' => 27,
         ),
         'G' =>
         array (
@@ -220,8 +222,6 @@ class ComposerStaticInit50bff265e6cfad518a30b9d2e47ab23f
         'A' =>
         array (
             'App\\' => 4,
-            'Andersiglebekk\\LaravelPrinciples\\Tests\\' => 39,
-            'Andersiglebekk\\LaravelPrinciples\\' => 33,
         ),
     );
 
@@ -558,6 +558,14 @@ class ComposerStaticInit50bff265e6cfad518a30b9d2e47ab23f
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
         ),
+        'Iglebekk\\LaravelPrinciples\\Tests\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
+        ),
+        'Iglebekk\\LaravelPrinciples\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
         'GuzzleHttp\\UriTemplate\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/uri-template/src',
@@ -657,14 +665,6 @@ class ComposerStaticInit50bff265e6cfad518a30b9d2e47ab23f
         'App\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/pint/app',
-        ),
-        'Andersiglebekk\\LaravelPrinciples\\Tests\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/tests',
-        ),
-        'Andersiglebekk\\LaravelPrinciples\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/src',
         ),
     );
 

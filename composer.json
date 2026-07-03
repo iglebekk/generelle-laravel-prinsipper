@@ -23,12 +23,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Andersiglebekk\\LaravelPrinciples\\": "src/"
+      "Iglebekk\\LaravelPrinciples\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Andersiglebekk\\LaravelPrinciples\\Tests\\": "tests/"
+      "Iglebekk\\LaravelPrinciples\\Tests\\": "tests/"
     }
   },
   "scripts": {
@@ -44,7 +44,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Andersiglebekk\\LaravelPrinciples\\LaravelPrinciplesServiceProvider"
+        "Iglebekk\\LaravelPrinciples\\LaravelPrinciplesServiceProvider"
       ]
     }
   },

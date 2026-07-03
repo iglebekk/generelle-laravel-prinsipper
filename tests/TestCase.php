@@ -1,8 +1,8 @@
 <?php
 
-namespace Andersiglebekk\LaravelPrinciples\Tests;
+namespace Iglebekk\LaravelPrinciples\Tests;
 
-use Andersiglebekk\LaravelPrinciples\LaravelPrinciplesServiceProvider;
+use Iglebekk\LaravelPrinciples\LaravelPrinciplesServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

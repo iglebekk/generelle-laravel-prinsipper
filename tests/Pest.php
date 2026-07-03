@@ -1,5 +1,5 @@
 <?php
 
-use Andersiglebekk\LaravelPrinciples\Tests\TestCase;
+use Iglebekk\LaravelPrinciples\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

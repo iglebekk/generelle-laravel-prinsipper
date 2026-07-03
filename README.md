@@ -70,11 +70,13 @@ Legg til i prosjektets `composer.json`:
 {
   "scripts": {
     "post-install-cmd": [
-      "@php artisan laravel-prinsipper:sync"
+      "@php -r \"require_once 'vendor/autoload.php'; if (! class_exists('Iglebekk\\\\LaravelPrinciples\\\\LaravelPrinciplesServiceProvider')) { exit(0); } passthru(PHP_BINARY . ' artisan laravel-prinsipper:sync --no-interaction', $exitCode); exit($exitCode);\""
     ],
     "post-update-cmd": [
-      "@php artisan laravel-prinsipper:sync"
+      "@php -r \"require_once 'vendor/autoload.php'; if (! class_exists('Iglebekk\\\\LaravelPrinciples\\\\LaravelPrinciplesServiceProvider')) { exit(0); } passthru(PHP_BINARY . ' artisan laravel-prinsipper:sync --no-interaction', $exitCode); exit($exitCode);\""
     ]
   }
 }
 ```
+
+Dette er viktig hvis pakken er installert med `--dev`. I produksjon kjøres ofte `composer install --no-dev`, og da finnes ikke kommandoen. Guard-en over avslutter derfor stille med `0` når pakken ikke er tilgjengelig.

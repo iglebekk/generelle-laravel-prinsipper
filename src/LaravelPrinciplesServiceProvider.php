@@ -1,8 +1,8 @@
 <?php
 
-namespace Andersiglebekk\LaravelPrinciples;
+namespace Iglebekk\LaravelPrinciples;
 
-use Andersiglebekk\LaravelPrinciples\Console\SyncLaravelPrinciplesCommand;
+use Iglebekk\LaravelPrinciples\Console\SyncLaravelPrinciplesCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
