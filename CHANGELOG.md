@@ -12,6 +12,7 @@ Formatet følger [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) og pro
 - Bygget om ServiceProvider på `spatie/laravel-package-tools`.
 
 ### Lagt til
+- Prinsipp om at man alltid skal bruke `php artisan`-kommandoer når de finnes, f.eks. `make:*` for å opprette nye filer.
 - Pest-testsuite via `orchestra/testbench`.
 - Pint-config, `.editorconfig`, `.gitattributes`.
 - GitHub Actions workflow for tester.
