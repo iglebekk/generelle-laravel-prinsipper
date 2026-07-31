@@ -2,6 +2,67 @@
 
 Dette dokumentet inneholder generelle mønstre, pakker og beste praksis for Laravel-utvikling basert på Laravel Boost Guidelines. Disse prinsippene kan gjenbrukes på tvers av prosjekter.
 
+## Arbeidsregler for AI-assistenter
+
+Disse reglene skal vektlegges høyt når AI-en analyserer, implementerer og verifiserer endringer.
+
+### 1. Think Before Coding
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Før implementering:
+
+- Si antakelser eksplisitt.
+- Hvis noe er usikkert eller tvetydig: spør brukeren i stedet for å velge stille.
+- Hvis flere tolkninger er mulige: presenter dem kort.
+- Hvis en enklere løsning finnes: si det tydelig.
+- Hvis noe er uklart: stopp, forklar hva som er uklart, og be om avklaring.
+
+### 2. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- Ikke bygg mer enn det som ble bedt om.
+- Ikke innfør abstraksjoner for kode som bare brukes ett sted.
+- Ikke legg til fleksibilitet, konfigurasjon eller utvidbarhet som ikke er etterspurt.
+- Ikke skriv error handling for scenarier som i praksis ikke kan skje.
+- Hvis løsningen blir unødvendig stor: forenkle den.
+
+Spør alltid: "Ville en senior engineer sagt at dette er overkomplisert?" Hvis ja, gjør det enklere.
+
+### 3. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+Når eksisterende kode endres:
+
+- Endre bare det som er nødvendig for oppgaven.
+- Ikke forbedre nærliggende kode, kommentarer eller formatering uten at det er en del av oppgaven.
+- Ikke refaktorer kode som ikke er direkte relevant.
+- Match eksisterende stil i prosjektet.
+- Fjern imports, variabler eller funksjoner som blir overflødige som følge av egne endringer.
+- Hvis du oppdager unrelated dead code: nevn det, men ikke slett det uten å bli bedt om det.
+
+Testen er enkel: Hver endret linje skal kunne spores direkte til brukerens behov.
+
+### 4. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Gjør oppgaver om til verifiserbare mål:
+
+- "Add validation" -> skriv tester for ugyldige inputs, og få dem til å passere.
+- "Fix the bug" -> skriv en test som reproduserer feilen, og få den til å passere.
+- "Refactor X" -> sørg for at tester passerer både før og etter.
+
+Ved oppgaver med flere steg skal planen være kort og målbar:
+
+1. [Steg] -> verifiser: [sjekk]
+2. [Steg] -> verifiser: [sjekk]
+3. [Steg] -> verifiser: [sjekk]
+
+Sterke suksesskriterier gjør at AI-en kan jobbe selvstendig uten å gjette. Svake mål som "få det til å virke" krever mer avklaring.
+
 ## Språk
 
 - Alle kommentarer, variabelnavn, funksjonsnavn og tekst i koden skal være på engelsk.

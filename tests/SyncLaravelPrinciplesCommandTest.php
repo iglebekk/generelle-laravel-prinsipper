@@ -23,7 +23,10 @@ it('writes full docs to docs_target', function () {
 
     $docs = $this->workspace.'/docs/laravel-prinsipper.md';
     expect(File::exists($docs))->toBeTrue();
-    expect(File::get($docs))->not->toBeEmpty();
+    expect(File::get($docs))
+        ->not->toBeEmpty()
+        ->toContain('## Arbeidsregler for AI-assistenter')
+        ->toContain('### 1. Think Before Coding');
 });
 
 it('writes reference block into agent files, not full content', function () {

@@ -6,6 +6,11 @@ Formatet følger [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) og pro
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-07-31
+
+### Lagt til
+- Høyt prioriterte arbeidsregler for AI-assistenter: Think Before Coding, Simplicity First, Surgical Changes og Goal-Driven Execution.
+
 ## [3.0.1] - 2026-07-23
 
 ### Lagt til
