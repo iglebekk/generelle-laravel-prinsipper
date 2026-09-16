@@ -6,6 +6,12 @@ Formatet følger [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) og pro
 
 ## [Unreleased]
 
+## [3.0.3] - 2026-09-16
+
+### Lagt til
+- Obligatorisk CRUDdy by Design for KI-agenter, med mindre annet er eksplisitt spesifisert.
+- Obligatorisk delegering av koding og filendringer til enkleste egnede underagent, med review av hovedagenten.
+
 ## [3.0.2] - 2026-07-31
 
 ### Lagt til

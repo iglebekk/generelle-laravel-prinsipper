@@ -80,6 +80,26 @@ Sterke suksesskriterier gjør at AI-en kan jobbe selvstendig uten å gjette. Sva
 - Default: Filament er egen admin-/resource-løsning og kan brukes der det passer, men egenprodusert frontend følger fortsatt Flux- og komponentreglene.
 - Default: Installer alltid Laravel Boost MCP Tools for rask innsikt i codebase og debugging (https://laravel.com/ai/boost)
 
+## CRUDdy by Design (obligatorisk standard)
+
+- KI-agenter skal alltid bruke CRUDdy by Design når de designer eller implementerer Laravel-funksjonalitet, med mindre brukeren, en godkjent spesifikasjon eller prosjektets eksplisitte regler sier noe annet.
+- Controllere skal som standard bare bruke Laravels resource-actions: `index`, `create`, `store`, `show`, `edit`, `update` og `destroy`.
+- Bruk `Route::resource()` eller `Route::apiResource()` med named routes, og begrens rutene med `only()` eller `except()` når ressursen ikke trenger alle actions.
+- En handling som ikke passer i en resource-action skal som standard modelleres som en egen ressurs med egen controller. En ressurs trenger ikke å være en Eloquent-modell; den kan representere et domenekonsept, en relasjon, en tilstandsendring eller en prosess.
+- Gi nestede ressurser, pivot-relasjoner og domenekonsepter egne resource-controllere når det holder controllerne enkle og forutsigbare.
+- Ikke legg custom actions som `publish`, `archive`, `approve` eller `cancel` på en eksisterende resource-controller når handlingen naturlig kan uttrykkes som `store`, `update` eller `destroy` på en egen ressurs.
+- Ikke bruk invokable controllere som erstatning for resource-controllere uten at avviket er eksplisitt spesifisert.
+- Et avvik skal være eksplisitt, ikke antatt. Ved avvik skal valgt controller- og routestruktur beskrives kort før implementasjon.
+
+## Delegering til underagenter (obligatorisk standard)
+
+- KI-agenter skal alltid bruke enklere underagenter til å gjennomføre koding og filendringer, med mindre brukeren, en godkjent spesifikasjon eller prosjektets eksplisitte regler sier noe annet.
+- Velg den enkleste tilgjengelige agenten eller modellen som har tilstrekkelig kapasitet til den avgrensede oppgaven.
+- Hovedagenten skal bryte arbeidet ned i små, tydelige oppgaver med relevant kontekst og konkrete akseptansekriterier før delegering.
+- Hovedagenten beholder ansvaret for arkitektur, sikkerhet, koordinering og endelig kvalitet. All delegert kode skal gjennomgås, integreres og verifiseres med relevante tester av hovedagenten.
+- Underagenten skal få beskjed om å følge dette dokumentet og prosjektets lokale instruksjoner før den gjør endringer.
+- Hvis underagenter ikke er tilgjengelige i agentmiljøet, kan hovedagenten utføre endringen direkte og skal opplyse kort om dette.
+
 ### Prioritetsrekkefølge for valg av løsning
 
 1. Innebygd Laravel/Eloquent
@@ -291,6 +311,7 @@ $apiKey = env('GITHUB_TOKEN'); // Wrong
 ### Controllers
 
 - Controllers skal være enkle og effektive. Litt Eloquent-orkestrering er greit når det gir mer lesbar kode enn en ekstra abstraksjon.
+- Controllers skal følge CRUDdy by Design og bare bruke standard resource-actions, med mindre et avvik er eksplisitt spesifisert.
 - Bruk Form Requests for validering og write-authorization der det passer.
 - Bruk Policies for domeneautorisasjon. Kall policy fra controller eller Form Request ut fra hva som gir tydeligst flyt.
 
@@ -663,6 +684,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
 ## 📋 Sjekkliste for Nye Features
 
+- [ ] CRUDdy by Design er fulgt, eller avvik er eksplisitt spesifisert og begrunnet
+- [ ] Koding og filendringer er delegert til enkleste egnede underagent, og resultatet er gjennomgått
 - [ ] Controller er enkel, tydelig og tenant-scoped der relevant
 - [ ] Form Request med validation, messages og authorization der det gir mening
 - [ ] Policy for domeneautorisasjon der relevant
@@ -795,23 +818,25 @@ class ShowProjectTool extends Tool
 
 ## 💡 Viktige Prinsipper
 
-1. **Følg Laravel Conventions** - Bruk Laravels innebygde løsninger først
-2. **Flux via App-komponenter** - Bruk Flux UI gjennom egne Blade-wrappere
-3. **Test Everything** - Feature tests er påkrevd
-4. **Type Hints Everywhere** - PHP 8.3+ features
-5. **Lokalisering fra Start** - Ingen hardkodet tekst
-6. **Keep Controllers Effective** - Enkel orkestrering kan ligge i controller; tung eller gjenbrukt logikk flyttes til Actions/Services
-7. **Authorization i Policies** - Ikke spredt rundt i koden
-8. **Eager Loading** - Unngå N+1 queries
-9. **Named Routes** - Aldri hardkodede URLs
-10. **Format med Pint** - Konsistent kodestil
-11. **Bruk MCP Tools** - For rask innsikt i codebase og debugging
-12. **DRY med måte** - Lag komponenter og tjenester når de gir reell gjenbruk eller lesbarhet
-13. **Sikkerhet Først** - Alltid tenk på authorization og data validation
-14. **Ytelse** - Optimaliser database queries og unngå unødvendige operasjoner
-15. **Cache Strategisk** - Bruk caching for å forbedre ytelsen der det gir mening
-16. **Multi-Tenant Isolasjon** - Hent alltid data via tenant-relasjonen, aldri direkte på modellen
-17. **Bruk Artisan-kommandoer** - Bruk alltid `php artisan`-kommandoer når de finnes, f.eks. `make:*` for å opprette nye filer
+1. **CRUDdy by Design** - KI-agenter bruker alltid resource-controllere og standard CRUD-actions med mindre annet er eksplisitt spesifisert
+2. **Deleger implementasjon** - KI-agenter bruker alltid enkleste egnede underagent til koding og filendringer
+3. **Følg Laravel Conventions** - Bruk Laravels innebygde løsninger først
+4. **Flux via App-komponenter** - Bruk Flux UI gjennom egne Blade-wrappere
+5. **Test Everything** - Feature tests er påkrevd
+6. **Type Hints Everywhere** - PHP 8.3+ features
+7. **Lokalisering fra Start** - Ingen hardkodet tekst
+8. **Keep Controllers Effective** - Enkel orkestrering kan ligge i controller; tung eller gjenbrukt logikk flyttes til Actions/Services
+9. **Authorization i Policies** - Ikke spredt rundt i koden
+10. **Eager Loading** - Unngå N+1 queries
+11. **Named Routes** - Aldri hardkodede URLs
+12. **Format med Pint** - Konsistent kodestil
+13. **Bruk MCP Tools** - For rask innsikt i codebase og debugging
+14. **DRY med måte** - Lag komponenter og tjenester når de gir reell gjenbruk eller lesbarhet
+15. **Sikkerhet Først** - Alltid tenk på authorization og data validation
+16. **Ytelse** - Optimaliser database queries og unngå unødvendige operasjoner
+17. **Cache Strategisk** - Bruk caching for å forbedre ytelsen der det gir mening
+18. **Multi-Tenant Isolasjon** - Hent alltid data via tenant-relasjonen, aldri direkte på modellen
+19. **Bruk Artisan-kommandoer** - Bruk alltid `php artisan`-kommandoer når de finnes, f.eks. `make:*` for å opprette nye filer
 
 ## 🔗 Nyttige Ressurser
 

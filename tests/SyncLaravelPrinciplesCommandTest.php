@@ -26,7 +26,11 @@ it('writes full docs to docs_target', function () {
     expect(File::get($docs))
         ->not->toBeEmpty()
         ->toContain('## Arbeidsregler for AI-assistenter')
-        ->toContain('### 1. Think Before Coding');
+        ->toContain('### 1. Think Before Coding')
+        ->toContain('## CRUDdy by Design (obligatorisk standard)')
+        ->toContain('KI-agenter skal alltid bruke CRUDdy by Design')
+        ->toContain('## Delegering til underagenter (obligatorisk standard)')
+        ->toContain('KI-agenter skal alltid bruke enklere underagenter');
 });
 
 it('writes reference block into agent files, not full content', function () {
